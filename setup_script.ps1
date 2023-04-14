@@ -198,6 +198,15 @@ $Apps.Font                       = New-Object System.Drawing.Font('Microsoft San
 $Apps.ForeColor                  = [System.Drawing.ColorTranslator]::FromHtml("#ffffff")
 $Apps.BackColor                  = [System.Drawing.ColorTranslator]::FromHtml("#4a90e2")
 
+$Battery                         = New-Object system.Windows.Forms.Button
+$Battery.text                    = "Power Settings"
+$Battery.width                   = 150
+$Battery.height                  = 50
+$Battery.location                = New-Object System.Drawing.Point(620,552)
+$Battery.Font                    = New-Object System.Drawing.Font('Microsoft Sans Serif',12,[System.Drawing.FontStyle]([System.Drawing.FontStyle]::Bold))
+$Battery.ForeColor               = [System.Drawing.ColorTranslator]::FromHtml("#ffffff")
+$Battery.BackColor               = [System.Drawing.ColorTranslator]::FromHtml("#4a90e2")
+
 $OneDrive                        = New-Object system.Windows.Forms.Button
 $OneDrive.text                   = "Uninstall OneDrive"
 $OneDrive.width                  = 150
@@ -226,7 +235,7 @@ $oldMenu.ForeColor                 = [System.Drawing.ColorTranslator]::FromHtml(
 $oldMenu.BackColor                 = [System.Drawing.ColorTranslator]::FromHtml("#4a90e2")
 
 $DebloatWindows11.controls.AddRange(@(
-    $unpin,$disablecortana,$vbs,$DMode,$Apps,
+    $unpin,$disablecortana,$vbs,$DMode,$Apps, $Battery
     $LMode,$ListApps,$LeftMenu,$StartMenu,
     $EdgePDF,$Privacy,$FileExt,$RemoveKeys,
     $Label1,$Label2,$Label3,$Label4,
@@ -246,6 +255,7 @@ $Privacy.Add_Click({ Protect-Privacy })
 $FileExt.Add_Click({ ShowFileExt })
 $RemoveKeys.Add_Click({ Remove-Keys })
 $Apps.Add_Click({ InstallApps })
+$Battery.Add_Click({ MaximizeBattery })
 $OneDrive.Add_Click({ UninstallOneDrive  })
 $3DDir.Add_Click({ Remove3dObjects })
 $oldMenu.Add_Click({ ContextMenu })
@@ -979,6 +989,18 @@ function InstallApps {
         }
     }
     
+}
+
+Function MaximizeBattery {
+            
+    # Adds the processer performance boost mode
+    Write-Host "Adding the processer performance boost mode to power options"
+    $Boostmode = "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\54533251-82be-4824-96c1-47b60b740d00\be337238-0d82-4146-a960-4f3749d470c7"
+    If (!(Test-Path $Boostmode)) { 
+        New-Item $Boostmode
+    }
+    Set-ItemProperty $Boostmode Attributes -Value 2 
+    Write-Host "Processer performance boost mode has been added succesfully"
 }
 
 Function Remove3dObjects {
